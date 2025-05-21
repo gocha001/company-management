@@ -1,48 +1,66 @@
 'use client';
 
-import { Field, FieldAttributes } from 'formik';
-import React from 'react';
+import { useField } from 'formik';
 
-export interface InputFieldProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
-    Partial<Pick<FieldAttributes<string>, 'as'>> {
+interface InputFieldProps {
   label?: string;
-  as?: string;
+  name: string;
   children?: React.ReactNode;
+  id?: string;
+  as?: string;
+
+  placeholder?: string;
+  required?: boolean;
+  type?: string;
 }
 
 export default function InputField({
   label,
-  as = 'input',
-  id,
   children,
-  ...rest
+  ...props
 }: InputFieldProps) {
+  const [field, meta] = useField(props);
+
   return (
     <div className="flex flex-col">
       {label && (
-        <label htmlFor={id} className="mb-2 text-base color-gray-900">
+        <label
+          htmlFor={props.id || props.name}
+          className="mb-2 text-base text-gray-900"
+        >
           {label}
         </label>
       )}
-      <Field
-        {...rest}
-        id={id}
-        as={as}
-        // className="p-3 h-11 text-sm rounded border border-gray-300 shadow"
-        //       className={`
-        //   w-full  h-full block
-        //   px-3 pr-8
-        //   relative z-20
-        //   text-sm
-        //   border border-gray-300 rounded
-        //   shadow
-        //   appearance-none
-        //   bg-[url('/icons/chevron.svg')] bg-no-repeat bg-[right_0.75rem_center]
-        //   focus:outline-none focus:ring-2 focus:ring-blue-500
-        // `}
-      />
-      {children}
+
+      {props.as === 'select' ? (
+        <select
+          {...field}
+          {...props}
+          className={`
+            w-full h-11 px-3 pr-8 text-sm rounded border border-gray-300 shadow
+            appearance-none bg-white
+            bg-[url('/icons/chevron-down.svg')]
+            bg-no-repeat bg-[length:1rem] bg-[position:right_0.5rem_center]
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          `}
+        >
+          {children}
+        </select>
+      ) : (
+        <input
+          {...field}
+          {...props}
+          className={`
+            w-full h-11 px-3 text-sm rounded border border-gray-300 shadow
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+            
+          `}
+        />
+      )}
+
+      {meta.touched && meta.error && (
+        <span className="text-red-500 text-xs mt-1">{meta.error}</span>
+      )}
     </div>
   );
 }

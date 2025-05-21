@@ -91,7 +91,7 @@ export default function CompanyForm({ onSubmit }: CompanyFormProps) {
               <option value="" label="Select..." />
               {(Object.values(CompanyStatus) as CompanyStatus[]).map(
                 (status) => (
-                  <option key={status} value={status}>
+                  <option key={status} value={status} className="capitalize">
                     {status}
                   </option>
                 )
